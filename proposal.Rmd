@@ -1,0 +1,14 @@
+---
+title: "Proposal"
+author: Jacob Shoemaker; jshoemaker2249, Qinwen Yang; AngelQinwen, Laurel Baar; ljbaar109,
+  Hongsheng Yin; simonhsy
+date: "3/29/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+dataset: [link](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
