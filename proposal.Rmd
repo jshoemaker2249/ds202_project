@@ -10,5 +10,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Group Members:
+Jacob Shoemaker
+Qinwen Yang
+Laurel Baar
+Hongsheng Yin
 
-dataset: [link](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
+Project Coordinator: Jacob Shoemaker, jshoemaker249
+
+Dataset: Olympic History: Athletes and Results
+
+Link to dataset: [link](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
+
+Overview of dataset: This dataset, of 16 columns, contains basic information about the past 120 years of Olympic Games. Columns range from athlete name and information, event, year, medal, and location.
+
+
+Exploratory Analysis Plan: From this dataset, we hope to examine the relationship between athletes and their respective performance. Questions we could potentially investigate?
+
+- Which particular country produces the most gold medalists for any given sport?
+- Is there evidence of the Russian Doping Scandal in this dataset?
+
+
+
+
