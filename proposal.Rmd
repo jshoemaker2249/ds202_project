@@ -33,6 +33,8 @@ Exploratory Analysis Plan: From this dataset, we hope to examine the relationshi
 -Compare from 1896 to 2016, is there any change for sports in Olympic games?
 -What is the median height or weight for medal(gold) winners?
 
+- Is there any similar point among the gold medal earners(For example, relationships with cities, height, weight.)?
+- Which continent get most gold medals?  
 
 
 
