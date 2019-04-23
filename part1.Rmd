@@ -1,0 +1,46 @@
+---
+title: "project_part1"
+author: "Jacob Shoemaker; jshoemaker2249"
+date: "4/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1. Which particular country produces the most gold medalists for any given sport?
+The 5 most popular sports in the olympics (based on twitter mentions in 2012)**:
+- Soccer (Football)
+- Swimming
+- Track & Field (Athletics)
+- Gymnastics
+- Volleyball
+
+
+**[link]https://www.topendsports.com/world/lists/popular-sport/olympics-2012tweets.htm
+
+```{r}
+athlete_events <- read_csv("athlete_events.csv")
+library(dplyr)
+athlete_events$Medal <- as.factor(athlete_events$Medal)
+football <- athlete_events %>% filter(Sport == "Football")
+swimming <- athlete_events %>% filter(Sport == "Swimming")
+athletics <- athlete_events %>% filter(Sport == "Athletics")
+gymnastics <- athlete_events %>% filter(Sport == "Gymnastics")
+volleyball <- athlete_events %>% filter(Sport == "Volleyball")
+```
+
+```{r}
+df <- football %>% filter(!is.na(Medal)) %>% group_by(Team) %>% summarise(numMedals = n())
+df <- df[order(-df$numMedals), ] %>% filter(numMedals >= 50)
+
+ggplot(df, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "green4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Medals- Football") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+
+
+- Is there evidence of the Russian Doping Scandal in this dataset?
+
+
