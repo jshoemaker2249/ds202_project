@@ -29,9 +29,9 @@ Exploratory Analysis Plan: From this dataset, we hope to examine the relationshi
 
 - Which particular country produces the most gold medalists for any given sport?
 - Is there evidence of the Russian Doping Scandal in this dataset?
--Does the body composition such as weight or height would effect the skater's speed skating？
--Compare from 1896 to 2016, is there any change for sports in Olympic games?
--What is the median height or weight for medal(gold) winners?
+- Does the body composition such as weight or height would effect the skater's speed skating？
+- Compare from 1896 to 2016, is there any change for sports in Olympic games?
+- What is the median height or weight for medal(gold) winners?
 
 
 
