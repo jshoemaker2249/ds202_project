@@ -22,7 +22,7 @@ The 5 most popular sports in the olympics (based on twitter mentions in 2012)**:
 **[link]https://www.topendsports.com/world/lists/popular-sport/olympics-2012tweets.htm
 
 ```{r}
-athlete_events <- read_csv("athlete_events.csv")
+athlete_events <- read.csv("athlete_events.csv")
 library(dplyr)
 athlete_events$Medal <- as.factor(athlete_events$Medal)
 football <- athlete_events %>% filter(Sport == "Football")
@@ -33,14 +33,69 @@ volleyball <- athlete_events %>% filter(Sport == "Volleyball")
 ```
 
 ```{r}
-df <- football %>% filter(!is.na(Medal)) %>% group_by(Team) %>% summarise(numMedals = n())
-df <- df[order(-df$numMedals), ] %>% filter(numMedals >= 50)
+df <- football %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+df <- df[order(-df$numMedals), ] %>% filter(numMedals >= 17)
 
-ggplot(df, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "green4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Medals- Football") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+library(ggplot2)
+
+ggplot(df, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "green4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Football/Soccer") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+ds <- swimming %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+ds <- ds[order(-ds$numMedals), ] %>% filter(numMedals >= 14)
+
+ggplot(ds, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "skyblue3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Swimming") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+da <- athletics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+da <- da[order(-da$numMedals), ] %>% filter(numMedals >= 27)
+
+ggplot(da, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "salmon3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Athletics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+dg <- gymnastics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+dg <- dg[order(-dg$numMedals), ] %>% filter(numMedals >= 30)
+
+ggplot(dg, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "red4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Gymnastics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+dv <- volleyball %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+dv <- dv[order(-dv$numMedals), ]
+
+ggplot(dv, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "gold1") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Volleyball") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+golds <- athlete_events %>% filter(Medal == "Gold")
+g <- golds %>% group_by(Team) %>% summarise(numGolds = n())
+
+
+test <- g
+write.csv(test, "goldmedals.csv")
+
+golds_final <- read.csv("goldmedals_final.csv")
+
+countries <- map_data('world')
+merged <-  right_join(golds_final, countries, by= c("Team"="region"))
+library(ggplot2)
+p <- ggplot(merged, aes(x=long, y=lat, fill= numGolds)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group)) + xlab("Longitude") + ylab("Latitude") 
+p <- p + scale_fill_continuous(low='white', high='darkred', na.value='grey') + labs(fill= "Number of Gold Medals")
+p 
 ```
 
 
 
 - Is there evidence of the Russian Doping Scandal in this dataset?
 
+```{r}
+russia <- athlete_events %>% filter(Team == "Russia")
+#number of olympians
+rus_sum <- russia %>% group_by(Year) %>% tally()
 
+#number of medals
+rus_medals <- russia %>% filter(!is.na(Medal)) %>% group_by(Year) %>% summarise(numMedals = n())
+```
