@@ -14,10 +14,9 @@ library(dplyr)
 Athlete <- read.csv(file = "athlete_events.csv")
 ```
 
-Number of women in Olympics each year compare to men?
-Number of women in Olympics in year 1896?
-Which country(team) first have female athlete
-how many country join olympics?
+
+
+Number of Male and Female athletes each year?
 ```{r, fig.height=8}
 #Draft:
 max(c$n)
@@ -51,6 +50,26 @@ ggplot(GroupYearSex, aes(x=Year, y=Athletes, fill=Sex))+geom_bar(stat = "identit
 
 
 
+
+```
+Which Country(team) first have female athletes? In which year? 
+```{r}
+#In the above barplot, it shows in 1900, it starts have female athletes.
+Year1900 <- Athlete %>% filter(Year == 1900)
+filterSex <- Year1900 %>% filter(Sex == 'F')
+GroupfilterSex <- filterSex %>% group_by(NOC) %>% summarise(Athlete = length(unique(ID)))
+
+levels(GroupfilterSex$NOC) <- c("Bohemia", "France","Great Britain", "Italy","Lerina","United States")
+ggplot(GroupfilterSex, aes(x=NOC, y=Athlete))+ geom_bar(stat = "identity")+ylim(c(0,15))+ylab("Number of Athletes")
+
+GroupfilterSex <- filterSex %>% group_by(NOC,Team) %>% summarise(Athlete = length(unique(ID)))
+
+#Change color for France adn USA to Red(Highlight).
+#Change x-axis from NOC to country name.
 ```
 
+How many country join athlete?
+```{r}
+
+```
 
