@@ -99,3 +99,7 @@ rus_sum <- russia %>% group_by(Year) %>% tally()
 #number of medals
 rus_medals <- russia %>% filter(!is.na(Medal)) %>% group_by(Year) %>% summarise(numMedals = n())
 ```
+
+
+
+

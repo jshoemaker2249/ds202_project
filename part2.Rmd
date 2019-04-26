@@ -1,0 +1,56 @@
+---
+title: "finalProject"
+author: "Qinwen Yang, AngelQinwen"
+date: "4/23/2019"
+output: html_document
+---
+
+
+
+Read Data:
+```{r}
+library(ggplot2)
+library(dplyr)
+Athlete <- read.csv(file = "athlete_events.csv")
+```
+
+Number of women in Olympics each year compare to men?
+Number of women in Olympics in year 1896?
+Which country(team) first have female athlete
+how many country join olympics?
+```{r, fig.height=8}
+#Draft:
+max(c$n)
+which.max(c$n)
+c[which.max(c$n),]
+max(Athlete$Year)
+min(Athlete$Year)
+unique(Athlete$Year)
+sort(unique(Athlete$Year))
+#sort data by increasing order Year:
+OrderAthlete <- Athlete[order(Athlete$Year),]
+
+
+#Number of Male and Female in 1896 Year
+Year1896 <- Athlete %>% filter(Year == '1896')
+Year1896Data <- Year1896 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
+ggplot(Year1896Data, aes(x=Sex, y=Athletes))+geom_col(width = 0.3)
+#Number of Male and Female in 2016 Year
+Year2016 <- Athlete %>% filter(Year == '2016')
+Year2016Data <- Year2016 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
+ggplot(Year2016Data, aes(x=Sex, y=Athletes))+geom_col(width = 0.5)
+#Number of Male and Female in each year
+GroupYearSex <- Athlete %>% group_by(Year, Sex) %>% summarise(Athletes = length(unique(Name)))
+levels(GroupYearSex$Sex) <- c("Female", "Male")
+ggplot(GroupYearSex, aes(x=Year, y=Athletes, color=Sex))+geom_point(size=5)+geom_line(size=1)+ylab("Number of Athlete")+scale_color_manual(values = c("red","blue"))
+#Note that the Winter and Summer Games were held in the same year up until 1992, after 1992, starting with 1994, they staggered the olympic games such that Winter Games occur on a four year cycle, then Summer in 1996, then Winter in 1998. The time for holding Olympic games change from four year to two year after 1992.
+ggplot(GroupYearSex, aes(x=Year, y=Athletes, fill=Sex))+geom_bar(stat = "identity")+ylab("Number of Athletes")
+
+
+
+
+
+
+```
+
+
