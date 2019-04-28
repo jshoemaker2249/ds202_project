@@ -1,0 +1,23 @@
+---
+title: "part3"
+author: "Hongsheng Yin, simonhsy"
+date: "April 28, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- Is there any similar point among the gold medal earners(For example, relationships with cities, height, weight.)?
+```{r}
+library(ggplot2)
+library(dplyr)
+Athlete <- read.csv(file = "athlete_events.csv")
+head(Athlete)
+
+gold <- Athlete %>% filter(Medal == "Gold") %>% select(Name,Sex,Age,Height,Weight,Sport)
+head(gold)
+
+ggplot(gold %>% na.omit(), aes(x=`Weight`, y=`Height`, color = `Sex`, size = `Age`,group = `Sport` )) + lims(x=c(20,175),y=c(120,230))+ geom_vline(xintercept = 97.5) + geom_hline(yintercept = 175)+geom_point(position='jitter')+ theme(text = element_text(size=8)) +ggtitle("Gold medal earners")+xlab("Weight")+ylab("Height") + theme(legend.position="bottom")+ facet_wrap(~Sport)
+```
