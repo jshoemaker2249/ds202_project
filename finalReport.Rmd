@@ -1,0 +1,138 @@
+---
+title: "Final Project Report"
+author: "Jacob Shoemaker; jshoemaker2249, Qinwen Yang; AngelQinwen, Laurel Baar; ljbaar109,
+  Hongsheng Yin; simonhsy"
+date: "4/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Project Coordinator: Jacob Shoemaker, jshoemaker249
+
+Dataset: Olympic History: Athletes and Results
+
+
+For our DS 202 Final Project, our group chose to analyze data pertaining to olympic athletes and results, accumulated over the past 120 years. 
+
+
+This data was acquired from Kaggle, originally sourced from Olympic enthusiasts. This meant that the data was clean and required very little prep work. With more than 270,000 rows, there was plenty of data to use. Columns included information such as name, year, athlete information (hieght, wieght, sex, age), team, sport, event, and outcome (medal or NA).
+
+
+From the dataset, we decided to outline the story of our analysis based on the following questions:
+
+- Which particular country produces the most gold medals for any given sport?
+- Is there evidence of the Russian Doping Scandal in this dataset?
+- Does the body composition such as weight or height affect the a speed skater's performance？
+- From 1896 to 2016, is there any change in sports in Olympic games?
+- What is the median height or weight for gold medal winners?
+- Is there any similar point among the gold medal earners(For example, relationships with cities, height, weight)?
+- Which continent produces the most gold medals? 
+
+
+## Part 1:  
+Which particular country produces the most gold medals for any given sport?
+To begin, this question is vague in the sense that there are many different sports, across both the Summer and Winter games. Therefore, we decided to narrow the scope of this question to the top 5 most popular sports based on the number of tweets in 2012. They are:
+- Soccer (Football)
+- Swimming
+- Track & Field (Athletics)
+- Gymnastics
+- Volleyball
+
+```{r, include=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+
+Importing the data, changing the Medal column to a factor, and filtering each popular sport into its own dataset:
+```{r}
+athlete_events <- read.csv("athlete_events.csv")
+athlete_events$Medal <- as.factor(athlete_events$Medal)
+football <- athlete_events %>% filter(Sport == "Football")
+swimming <- athlete_events %>% filter(Sport == "Swimming")
+athletics <- athlete_events %>% filter(Sport == "Athletics")
+gymnastics <- athlete_events %>% filter(Sport == "Gymnastics")
+volleyball <- athlete_events %>% filter(Sport == "Volleyball")
+```
+
+
+Then filtering by number of gold medals, picking the top number of teams, and plotting the results: 
+```{r}
+df <- football %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+df <- df[order(-df$numMedals), ] %>% filter(numMedals >= 17)
+
+ggplot(df, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "green4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Football/Soccer") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+ds <- swimming %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+ds <- ds[order(-ds$numMedals), ] %>% filter(numMedals >= 14)
+
+ggplot(ds, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "skyblue3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Swimming") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+da <- athletics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+da <- da[order(-da$numMedals), ] %>% filter(numMedals >= 27)
+
+ggplot(da, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "salmon3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Athletics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+dg <- gymnastics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+dg <- dg[order(-dg$numMedals), ] %>% filter(numMedals >= 30)
+
+ggplot(dg, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "red4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Gymnastics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+```{r}
+dv <- volleyball %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
+dv <- dv[order(-dv$numMedals), ]
+
+ggplot(dv, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "gold1") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Volleyball") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
+```
+
+
+As you can see, the United States is overwhelmingly successful in these summer sports. In the future, it would be interesting to build an ad-hoc or interactive application using something like Shiny to produce more in-depth reports.  
+
+
+
+
+## Part 1, continued:  
+We also wanted to explore the number of total medals won on an individual country basis. To do this, a choropleth map made the most sense.
+
+
+One problem we encountered early on is the changing of team names over time. For example, the map data and Olympic data contained discrepancies between the United States and USA. In addition, the Soviet Union no longer exists, however they performed well in the Olympics. Therefore, we chose to edit this data in Excel, as to quickly merge the similar rows together. From there, we joined the two tables, and plotted the results based on number of total medals won since the beginning of the dataset (1896): 
+```{r, warning=FALSE}
+golds <- athlete_events %>% filter(Medal == "Gold")
+g <- golds %>% group_by(Team) %>% summarise(numGolds = n())
+
+
+test <- g
+write.csv(test, "goldmedals.csv")
+
+golds_final <- read.csv("goldmedals_final.csv")
+
+countries <- map_data('world')
+merged <-  right_join(golds_final, countries, by= c("Team"="region"))
+library(ggplot2)
+p <- ggplot(merged, aes(x=long, y=lat, fill= numGolds)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group)) + xlab("Longitude") + ylab("Latitude") 
+p <- p + scale_fill_continuous(low='white', high='darkred', na.value='grey') + labs(fill= "Number of Gold Medals")
+p 
+```
+
+
+As you can see, the United States, Russia, China, Australia, and a handful of European countries account for most of the medals won in the modern Olympic era. Going forward, it would be interesting to find a map that accounted for changes in country names and borders. In doing so, we would be able to see the success of the Soviet Union.  
+
+
+
+
+Sources:
+[dataset](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
+
+[most popular sports by tweets](https://www.topendsports.com/world/lists/popular-sport/olympics-2012tweets.htm)
+
+
