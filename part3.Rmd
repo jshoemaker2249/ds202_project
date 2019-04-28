@@ -21,3 +21,15 @@ head(gold)
 
 ggplot(gold %>% na.omit(), aes(x=`Weight`, y=`Height`, color = `Sex`, size = `Age`,group = `Sport` )) + lims(x=c(20,175),y=c(120,230))+ geom_vline(xintercept = 97.5) + geom_hline(yintercept = 175)+geom_point(position='jitter')+ theme(text = element_text(size=8)) +ggtitle("Gold medal earners")+xlab("Weight")+ylab("Height") + theme(legend.position="bottom")+ facet_wrap(~Sport)
 ```
+Which continent produces the most gold medals? 
+```{r}
+library(countrycode)
+country <- Athlete %>% group_by(Team) %>% filter(Medal == "Gold") %>% summarise(numGolds = n())
+suppressWarnings(country$continent <- countrycode(sourcevar = country$Team,
+                            origin = "country.name",
+                            destination = "continent"))
+continent <- country %>% na.omit() %>%group_by(continent)
+
+ggplot(continent, aes(x=continent, y=numGolds)) +
+  geom_bar(stat="identity") 
+```
