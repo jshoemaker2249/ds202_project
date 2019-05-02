@@ -1,6 +1,6 @@
 ---
 title: "Final Project Report"
-author: "Jacob Shoemaker; jshoemaker2249, Qinwen Yang; AngelQinwen, Laurel Baar; ljbaar109,
+author: "Jacob Shoemaker; jshoemaker2249, Qinwen Yang; AngelQinwen,
   Hongsheng Yin; simonhsy"
 date: "4/27/2019"
 output: html_document
@@ -127,8 +127,36 @@ p
 
 As you can see, the United States, Russia, China, Australia, and a handful of European countries account for most of the medals won in the modern Olympic era. Going forward, it would be interesting to find a map that accounted for changes in country names and borders. In doing so, we would be able to see the success of the Soviet Union.  
 
+##Part 3:
 
+- Is there any similar point among the gold medal earners(For example, relationships with cities, height, weight.)?
 
+```{r}
+library(ggplot2)
+library(dplyr)
+Athlete <- read.csv(file = "athlete_events.csv")
+gender <- Athlete %>% filter(Sex == "male")
+gold <- Athlete %>% filter(Medal == "Gold") %>% select(Name,Sex,Age,Height,Weight,Sport)
+ggplot(gold %>% na.omit(), aes(x=`Weight`, y=`Height`, color = `Sex`, size = `Age`,group = `Sport` )) + lims(x=c(20,175),y=c(120,230))+ geom_vline(xintercept = 97.5) + geom_hline(yintercept = 175)+geom_point(position='jitter')+ theme(text = element_text(size=8)) +ggtitle("Gold medal earners")+xlab("Weight")+ylab("Height") + theme(legend.position="bottom")+ facet_wrap(~Sport)
+```
+  
+  For some sports like gymnastics, it is about the art. They need a good body shape to do some difficult gymnastics poses. But overall, the range of height and weight are pretty normal. Sometimes they just need talents and hardworking but not weight and height.
+  
+- Which continent get most gold medals?  
+
+```{r}
+library(countrycode)
+country <- Athlete %>% group_by(Team) %>% filter(Medal == "Gold") %>% summarise(numGolds = n())
+suppressWarnings(country$continent <- countrycode(sourcevar = country$Team,
+                            origin = "country.name",
+                            destination = "continent"))
+continent <- country %>% na.omit() %>%group_by(continent)
+
+ggplot(continent, aes(x=continent, y=numGolds)) +
+  geom_bar(stat="identity") 
+```
+  
+  Even the United States got the most gold medals in the world, Europe got the most gold medals compare with other continents because there are more countries in Europe than America.
 
 Sources:
 [dataset](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
