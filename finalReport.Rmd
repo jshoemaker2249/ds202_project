@@ -190,9 +190,7 @@ How many sports in 1900? Which sports most female join? Male join?
 GroupSport <- Year1900 %>% group_by(Sport, Sex) %>% summarise(Athlete = length(unique(Name)))
 
 ggplot(GroupSport, aes(x=Sport, y=Athlete, fill = Sex))+geom_bar(stat = "identity")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
-#Most female at that time join Olympics for golf and tennis
-filterFemale <- Year1900 %>% filter(Sex=="F")
-GroupNOC3 <- filterFemale %>% group_by(NOC) %>% summarise(Athlete = length(unique(Name)))
+
 ```
 
 Conclusion:
@@ -217,7 +215,7 @@ ggplot(gold %>% na.omit(), aes(x=`Weight`, y=`Height`, color = `Sex`, size = `Ag
 - Which continent get most gold medals?  
 
 ```{r}
-#install.packages(countrycode)
+
 library(countrycode)
 country <- Athlete %>% group_by(Team) %>% filter(Medal == "Gold") %>% summarise(numGolds = n())
 suppressWarnings(country$continent <- countrycode(sourcevar = country$Team,
