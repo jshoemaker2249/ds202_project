@@ -11,7 +11,9 @@ Read Data:
 ```{r}
 library(ggplot2)
 library(dplyr)
+library(lubridate)
 Athlete <- read.csv(file = "athlete_events.csv")
+Regions <- read.csv(file = "noc_regions.csv")
 ```
 
 
@@ -33,15 +35,23 @@ OrderAthlete <- Athlete[order(Athlete$Year),]
 #Number of Male and Female in 1896 Year
 Year1896 <- Athlete %>% filter(Year == '1896')
 Year1896Data <- Year1896 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
-ggplot(Year1896Data, aes(x=Sex, y=Athletes))+geom_col(width = 0.3)
+Year1896Data$Sex <- factor(Year1896Data$Sex)
+levels(Year1896Data$Sex) <- c('Male','Female')
+ggplot(Year1896Data, aes(x=Sex, y=Athletes, fill=Sex))+geom_col(width = 0.3)+scale_fill_manual(values = "#00e6e6")+geom_label(aes(label = Athletes))+ylab('Number of Athletes')+ylim(c(0,200))
+
+
 #Number of Male and Female in 2016 Year
 Year2016 <- Athlete %>% filter(Year == '2016')
 Year2016Data <- Year2016 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
-ggplot(Year2016Data, aes(x=Sex, y=Athletes))+geom_col(width = 0.5)
+Year2016Data$Sex <- factor(Year2016Data$Sex)
+levels(Year2016Data$Sex) <- c('Female', 'Male')
+ggplot(Year2016Data, aes(x=Sex, y=Athletes, fill = Sex))+geom_col(width = 0.5)+geom_label(aes(label = Athletes))+ylab('Number of Athletes')
+
+
 #Number of Male and Female in each year
 GroupYearSex <- Athlete %>% group_by(Year, Sex) %>% summarise(Athletes = length(unique(Name)))
 levels(GroupYearSex$Sex) <- c("Female", "Male")
-ggplot(GroupYearSex, aes(x=Year, y=Athletes, color=Sex))+geom_point(size=5)+geom_line(size=1)+ylab("Number of Athlete")+scale_color_manual(values = c("red","blue"))
+ggplot(GroupYearSex, aes(x=Year, y=Athletes, color=Sex))+geom_point(size=5)+geom_line(size=1)+ylab("Number of Athletes")+scale_color_manual(values = c("red","blue"))
 #Note that the Winter and Summer Games were held in the same year up until 1992, after 1992, starting with 1994, they staggered the olympic games such that Winter Games occur on a four year cycle, then Summer in 1996, then Winter in 1998. The time for holding Olympic games change from four year to two year after 1992.
 ggplot(GroupYearSex, aes(x=Year, y=Athletes, fill=Sex))+geom_bar(stat = "identity")+ylab("Number of Athletes")
 
@@ -52,24 +62,102 @@ ggplot(GroupYearSex, aes(x=Year, y=Athletes, fill=Sex))+geom_bar(stat = "identit
 
 
 ```
+Conclusion:
+WWI:1914-1918:There's no olympic
+WWII:1939-1945:There's no olymipic
+The first olympic game held in Greek(Athena) in 1896. There's only male athletes at that time. In 2016, there are not only male atheletes but also female atheletes, and there's not a big difference between number of female and male athletes.From the barplot, we are able to see there's female athlete in 1900 years. From the point and line plot, we can see through 1896 to 1992, number of female and male athlete were almost increase, but there's no olymic games since WWI and WWII, so it shows a decrease. Also, After 1992, the point and line shows really strange, it's due to the Winter and Summer Games were held in the same year up until 1992, after 1992, starting with 1994, they staggered the olympic games such that Winter Games occur on a four year cycle, then Summer in 1996, then Winter in 1998. The time for holding Olympic games change from four year to two year after 1992. In addtion, since they separate to two seasons(winter, summer), there's more althlete join in summer compare to winter.
+
+
+
 Which Country(team) first have female athletes? In which year? 
 ```{r}
 #In the above barplot, it shows in 1900, it starts have female athletes.
 Year1900 <- Athlete %>% filter(Year == 1900)
 filterSex <- Year1900 %>% filter(Sex == 'F')
 GroupfilterSex <- filterSex %>% group_by(NOC) %>% summarise(Athlete = length(unique(ID)))
+GroupfilterSex$NOC <- factor(GroupfilterSex$NOC)
+levels(GroupfilterSex$NOC) <- c("Bohemia", "France","Great Britain", "Italy","Switzerland","United States")
+ggplot(GroupfilterSex, aes(x=NOC, y=Athlete, fill=NOC))+ geom_bar(stat = "identity")+ylim(c(0,15))+ylab("Number of Athletes")+
+  scale_fill_manual(values = c("grey","red","grey","grey","grey","red"))+
+  xlab("National Olympic Committee 3-letter code")+theme(axis.text.x = element_text(angle=45, hjust=1))+geom_text(aes(label = Athlete))
 
-levels(GroupfilterSex$NOC) <- c("Bohemia", "France","Great Britain", "Italy","Lerina","United States")
-ggplot(GroupfilterSex, aes(x=NOC, y=Athlete))+ geom_bar(stat = "identity")+ylim(c(0,15))+ylab("Number of Athletes")
 
-GroupfilterSex <- filterSex %>% group_by(NOC,Team) %>% summarise(Athlete = length(unique(ID)))
 
-#Change color for France adn USA to Red(Highlight).
-#Change x-axis from NOC to country name.
+
 ```
 
-How many country join athlete?
+How many country join athlete in 1896? What about in 2016?
 ```{r}
+GroupNOC <- Year1896 %>% group_by(NOC) %>% summarise(n=n())
+length(GroupNOC$NOC)
+ggplot(GroupNOC, aes(x=NOC, y=n))+geom_bar(stat = "identity")
 
+#ggplot(GroupNOC, aes(x=NOC, y=n))+geom_histogram(binwidth = 5)
+
+GroupNOC2 <-Year2016 %>% group_by(NOC) %>% summarise(n=n())
+length(GroupNOC2$NOC)
+```
+
+How many sports in 1900? which sports most female join? Male join?
+```{r}
+GroupSport <- Year1900 %>% group_by(Sport, Sex) %>% summarise(Athlete = length(unique(Name)))
+
+ggplot(GroupSport, aes(x=Sport, y=Athlete, fill = Sex))+geom_bar(stat = "identity")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#Most female at that time join Olympics for golf and tennis
+filterFemale <- Year1900 %>% filter(Sex=="F")
+GroupNOC3 <- filterFemale %>% group_by(NOC) %>% summarise(Athlete = length(unique(Name)))
+```
+
+What is the age of Athletes each year?
+```{r}
+AgeAthletes <- Athlete %>% group_by(Sex, Year) %>% summarise(Age = median(Age))
+
+ggplot(AgeAthletes, aes(x=Year, y=Age, color=Sex, na.rm=TRUE))+geom_point()+geom_line()+ylim(c(1, 50))+theme_minimal()
+```
+
+
+In swimming, which country got gold? How many for male and female?(Observe in 2016)
+```{r}
+filterSwim <- Year2016 %>% filter(Sport == "Swimming")
+
+filterGold <- filterSwim %>% filter(Medal == "Gold")
+
+ggplot(filterGold, aes(x=Sex, y=Age, fill=Sex))+geom_boxplot()
+ggplot(filterGold, aes(x=Sex, y=Height, fill=Sex))+geom_boxplot()+ylab("Height (cm)")
+ggplot(filterGold, aes(x=Sex, y=Weight, fill=Sex))+geom_boxplot()+ylab("Weight (kg)")
+
+groupGold <- filterGold %>% group_by(NOC) %>% summarise(Athlete = length(unique(Name)))
+
+#Which country have most gold medal in 2016?
+ggplot(groupGold, aes(x=NOC, y=Athlete))+geom_bar(stat = "identity")
+
+
+#what is the average age, average weight, average height for gold winner swimmer?
+groupSwimmerSex <- filterGold %>% group_by(Sex) %>% summarize(Age = mean(Age, na.rm = TRUE), Height = mean(Height, na.rm = TRUE), Weight = mean(Weight, na.rm = TRUE))
+
+
+groupSwimmerSex <- filterGold %>% group_by(Sex) %>% summarize(Age = median(Age, na.rm = TRUE), Height = median(Height, na.rm = TRUE), Weight = median(Weight, na.rm = TRUE))
+
+ggplot(groupSwimmerSex, aes(x=Height, y=Weight, fill=Sex))+geom_bar(stat = "identity")
+
+ggplot(groupSwimmerSex, aes(x=Sex, y=Height))+geom_bar(stat = "identity")
+
+ggplot(groupSwimmerSex, aes(x=Sex, y=Height))+geom_histogram(binwidth = 3, stat = "bin", position="stack", bins = 5)
+```
+
+Draw a map to express 2016 countries who have at least one medal.
+```{r}
+#Year2016 <- Athlete %>% filter(Year == '2016') %>% filter(Medal != "<NA>")
+#Year2016$NOC <- as.character(Year2016$NOC)
+#Regions$NOC <- as.character(Regions$NOC)
+#JoinRegions <- inner_join(Year2016, Regions, by = "NOC")
+Map <- map_data("world")
+Year2016 <- Athlete %>% filter(Year == '2016')
+filter2016 <- Year2016 %>% select(NOC, Medal)
+filter2016$NOC <- as.character(filter2016$NOC)
+Regions$NOC <- as.character(Regions$NOC)
+JoinRegions <- inner_join(filter2016, Regions, by="NOC")
+JoinRegions$region <- as.character(JoinRegions$region)
+JoinMap <- left_join(Map, JoinRegions, by="region" )
 ```
 
