@@ -21,15 +21,15 @@ Regions <- read.csv(file = "noc_regions.csv")
 Number of Male and Female athletes each year?
 ```{r, fig.height=8}
 #Draft:
-max(c$n)
-which.max(c$n)
-c[which.max(c$n),]
-max(Athlete$Year)
-min(Athlete$Year)
-unique(Athlete$Year)
-sort(unique(Athlete$Year))
+#max(c$n)
+#which.max(c$n)
+#c[which.max(c$n),]
+#max(Athlete$Year)
+#min(Athlete$Year)
+#unique(Athlete$Year)
+#sort(unique(Athlete$Year))
 #sort data by increasing order Year:
-OrderAthlete <- Athlete[order(Athlete$Year),]
+#OrderAthlete <- Athlete[order(Athlete$Year),]
 
 
 #Number of Male and Female in 1896 Year
@@ -142,22 +142,8 @@ ggplot(groupSwimmerSex, aes(x=Height, y=Weight, fill=Sex))+geom_bar(stat = "iden
 
 ggplot(groupSwimmerSex, aes(x=Sex, y=Height))+geom_bar(stat = "identity")
 
-ggplot(groupSwimmerSex, aes(x=Sex, y=Height))+geom_histogram(binwidth = 3, stat = "bin", position="stack", bins = 5)
+#ggplot(groupSwimmerSex, aes(x=Sex, y=Height))+geom_histogram(binwidth = 3, stat = "bin", position="stack", bins = 5)
 ```
 
-Draw a map to express 2016 countries who have at least one medal.
-```{r}
-#Year2016 <- Athlete %>% filter(Year == '2016') %>% filter(Medal != "<NA>")
-#Year2016$NOC <- as.character(Year2016$NOC)
-#Regions$NOC <- as.character(Regions$NOC)
-#JoinRegions <- inner_join(Year2016, Regions, by = "NOC")
-Map <- map_data("world")
-Year2016 <- Athlete %>% filter(Year == '2016')
-filter2016 <- Year2016 %>% select(NOC, Medal)
-filter2016$NOC <- as.character(filter2016$NOC)
-Regions$NOC <- as.character(Regions$NOC)
-JoinRegions <- inner_join(filter2016, Regions, by="NOC")
-JoinRegions$region <- as.character(JoinRegions$region)
-JoinMap <- left_join(Map, JoinRegions, by="region" )
-```
+
 
