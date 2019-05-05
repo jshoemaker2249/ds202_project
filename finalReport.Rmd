@@ -212,7 +212,7 @@ From the plot, it shows there were 20 sports in 1900. Most women join sports in 
 
 - Is there any similar point among the gold medal earners(For example, relationships with cities, height, weight.)?
 
-```{r}
+```{r, echo=FALSE}
 
 Athlete <- read.csv(file = "athlete_events.csv")
 gender <- Athlete %>% filter(Sex == "male")
@@ -224,7 +224,7 @@ ggplot(gold %>% na.omit(), aes(x=`Weight`, y=`Height`, color = `Sex`, size = `Ag
   
 - Which continent get most gold medals?  
 
-```{r}
+```{r, echo=FALSE}
 
 library(countrycode)
 country <- Athlete %>% group_by(Team) %>% filter(Medal == "Gold") %>% summarise(numGolds = n())
