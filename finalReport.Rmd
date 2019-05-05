@@ -129,14 +129,15 @@ p
 As you can see, the United States, Russia, China, Australia, and a handful of European countries account for most of the medals won in the modern Olympic era. Going forward, it would be interesting to find a map that accounted for changes in country names and borders. In doing so, we would be able to see the success of the Soviet Union.  
 
 ##Part 2:
-Read Dataset:
-```{r}
+
+```{r, echo=FALSE}
 Athlete <- read.csv(file = "athlete_events.csv")
 Regions <- read.csv(file = "noc_regions.csv")
 ```
 
-Number of male and female athletes in 1896? In 2016?
-```{r}
+Question 1: Number of male and female athletes in 1896? 
+
+```{r, echo=FALSE}
 #Number of Male and Female in 1896 Year
 Year1896 <- Athlete %>% filter(Year == '1896')
 Year1896Data <- Year1896 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
@@ -144,21 +145,28 @@ Year1896Data$Sex <- factor(Year1896Data$Sex)
 levels(Year1896Data$Sex) <- c('Male','Female')
 ggplot(Year1896Data, aes(x=Sex, y=Athletes, fill=Sex))+geom_col(width = 0.3)+scale_fill_manual(values = "#00e6e6")+geom_label(aes(label = Athletes))+ylab('Number of Athletes')+ylim(c(0,200))
 
+
+
+```
+
+Question 2: Number of male and female athletes in 2016?
+
+```{r, echo=FALSE}
 #Number of Male and Female in 2016 Year
 Year2016 <- Athlete %>% filter(Year == '2016')
 Year2016Data <- Year2016 %>% group_by(Sex) %>% summarise(Athletes = length(unique(Name)))
 Year2016Data$Sex <- factor(Year2016Data$Sex)
 levels(Year2016Data$Sex) <- c('Female', 'Male')
 ggplot(Year2016Data, aes(x=Sex, y=Athletes, fill = Sex))+geom_col(width = 0.5)+geom_label(aes(label = Athletes))+ylab('Number of Athletes')
-
 ```
 
 Conclusion: 
 This olympic dataset covers from 1896 to 2016. The first olympic games held in Greek(Athena) in 1896. From the barplot, there's only 176 athletes total at that time and all of them were male. There's no women allowed to participate in Olympic games due to the social class and women were considered as a second-class people like slaves and foreigners at that time. For the Olympic games held in Brazil(Rio) in 2016, there's over eleven thousand athletes, over five thousand were female, over six thousand were male. Although male have the highest number of athletes, there's not a big difference between number of female and male athletes.
 
 
-Number of male and female athletes each year?
-```{r}
+Question 3: Number of male and female athletes each year?
+
+```{r, echo=FALSE}
 #Number of Male and Female in each year
 GroupYearSex <- Athlete %>% group_by(Year, Sex) %>% summarise(Athletes = length(unique(Name)))
 levels(GroupYearSex$Sex) <- c("Female", "Male")
@@ -170,8 +178,9 @@ Conclusion:
 This plot covers the olympic games from 1896 to 2016. From 1896 to 1992, number of athletes in male and female were in a positive relationship which most were in a increase direction. There were few part in decrease direction, and two of them were due to WWI and WWII, olympic games were suspend at that time. After 1992, the plot shows a really strange(huge decrease), it was because winter and summer games were held in same year up to 1992, starting with 1994(winter games), they separate the olympic games into two seasons(summer, winter). Due to separate of winter and summer season, there's a huge decrease from 1992 to 1994. In addition, since there were more athletes join in summer season than winter season, it contains a continuous wave after 1994. There's another plot shows the same question but more clear about the change for number of female and male athletes from the years of 1896 to 2016, and the change before and after 1992.
 
 
-Which country first had female athletes? In which year?
-```{r}
+Question 4: Which country first had female athletes? In which year?
+
+```{r, echo=FALSE}
 Year1900 <- Athlete %>% filter(Year == 1900)
 filterSex <- Year1900 %>% filter(Sex == 'F')
 GroupfilterSex <- filterSex %>% group_by(NOC) %>% summarise(Athlete = length(unique(ID)))
@@ -185,8 +194,9 @@ ggplot(GroupfilterSex, aes(x=NOC, y=Athlete, fill=NOC))+ geom_bar(stat = "identi
 Conclusion:
 From the data for GroupYearSex in last question, it shows the women were allowed to join olympic games start in 1900. There were six countries started to have female athletes, most female athletes were form France and United States. As total of 23 female athletes at that time, there were 12 from France, 7 from United States.
 
-How many sports in 1900? Which sports most female join? Male join?
-```{r}
+Question 5: How many sports in 1900? Which sports most female join? Male join?
+
+```{r, echo=FALSE}
 GroupSport <- Year1900 %>% group_by(Sport, Sex) %>% summarise(Athlete = length(unique(Name)))
 
 ggplot(GroupSport, aes(x=Sport, y=Athlete, fill = Sex))+geom_bar(stat = "identity")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
