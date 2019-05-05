@@ -50,7 +50,7 @@ library(lubridate)
 
 
 Importing the data, changing the Medal column to a factor, and filtering each popular sport into its own dataset:
-```{r}
+```{r, include=FALSE}
 athlete_events <- read.csv("athlete_events.csv")
 athlete_events$Medal <- as.factor(athlete_events$Medal)
 football <- athlete_events %>% filter(Sport == "Football")
@@ -69,28 +69,28 @@ df <- df[order(-df$numMedals), ] %>% filter(numMedals >= 17)
 ggplot(df, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "green4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Football/Soccer") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
 ```
 
-```{r}
+```{r, echo=FALSE}
 ds <- swimming %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
 ds <- ds[order(-ds$numMedals), ] %>% filter(numMedals >= 14)
 
 ggplot(ds, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "skyblue3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Swimming") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
 ```
 
-```{r}
+```{r, echo=FALSE}
 da <- athletics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
 da <- da[order(-da$numMedals), ] %>% filter(numMedals >= 27)
 
 ggplot(da, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "salmon3") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Athletics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
 ```
 
-```{r}
+```{r, echo=FALSE}
 dg <- gymnastics %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
 dg <- dg[order(-dg$numMedals), ] %>% filter(numMedals >= 30)
 
 ggplot(dg, aes(x = reorder(Team, -numMedals), y=numMedals)) + geom_col(fill = "red4") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle("Number of Gold Medals- Gymnastics") + theme(plot.title = element_text(hjust = 0.5))+ xlab("Country") + ylab("Number of Medals")
 ```
 
-```{r}
+```{r, echo=FALSE}
 dv <- volleyball %>% filter(Medal == "Gold") %>% group_by(Team) %>% summarise(numMedals = n())
 dv <- dv[order(-dv$numMedals), ]
 
